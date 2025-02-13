@@ -152,9 +152,3 @@ MIT License - See [LICENSE](LICENSE) for details.
     ⭐ Star this repo if you find it useful!
   </p>
 </div>
-```
-
-**Preview:**  
-![README Preview](https://placehold.co/800x500/1a1a1a/FFF?text=README+Preview%0A%0A%F0%9F%A4%96+Alya-Go%0A%0AImage+Banner%0A%0ABadges%0A%0AFeatures%0A%0AInstallation+Code%0A%0AContributing+Links%0A%0APlatforms%0A%0ALicense%0A%0AFooter)
-
----
