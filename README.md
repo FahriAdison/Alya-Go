@@ -29,3 +29,24 @@ pkg install golang git sqlite clang
 git clone https://github.com/FahriAdison/Alya-Go.git
 cd Alya-Go
 CGO_ENABLED=1 go run main.go
+```
+
+---
+
+## **Debian/Ubuntu**
+```bash
+# Install dependencies
+sudo apt-get update
+sudo apt-get install golang git sqlite3 gcc -y
+
+# Arch/Manjaro
+sudo pacman -S go git sqlite gcc
+
+# CentOS/RHEL
+sudo yum install golang git sqlite gcc
+
+# Run (all distros)
+git clone https://github.com/FahriAdison/Alya-Go.git
+cd Alya-Go
+CGO_ENABLED=1 go run main.go
+```
