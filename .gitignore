@@ -1,0 +1,16 @@
+# Session database (contains sensitive data!)
+whatsapp-session.db
+
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
