@@ -9,7 +9,9 @@ A WhatsApp bot built with Golang using the [whatsmeow](https://github.com/tulir/
 - QR code login with session persistence
 - Auto-reply to messages
 - Multi-device support (no phone required after login)
-- SQLite session storage
+- Cross-platform (Termux, Linux, Windows, Mac, VPS)
+
+---
 
 ## Installation 💻
 
@@ -31,11 +33,9 @@ cd Alya-Go
 CGO_ENABLED=1 go run main.go
 ```
 
----
-
-### **Debian/Ubuntu**
+### **Linux/VPS**
 ```bash
-# Install dependencies
+# Debian/Ubuntu
 sudo apt-get update
 sudo apt-get install golang git sqlite3 gcc -y
 
@@ -51,26 +51,22 @@ cd Alya-Go
 CGO_ENABLED=1 go run main.go
 ```
 
----
-
 ### **Windows**
-```bash
-Option 1: WSL (Recommended)
-
-wsl --install # Install WSL
+1. **Option 1: WSL (Recommended)**
+   ```powershell
+   wsl --install # Install WSL
    wsl # Enter Linux environment
    # Follow Linux instructions above
-```
----
+   ```
 
-```bash
-Option 2: Native (MinGW)
-choco install mingw go sqlite # Requires Chocolatey
+2. **Option 2: Native (MinGW)**
+   ```powershell
+   choco install mingw go sqlite # Requires Chocolatey
    git clone https://github.com/FahriAdison/Alya-Go.git
    cd Alya-Go
    set CGO_ENABLED=1
    go run main.go
-```
+   ```
 
 ### **MacOS**
 ```bash
@@ -82,8 +78,6 @@ git clone https://github.com/FahriAdison/Alya-Go.git
 cd Alya-Go
 CGO_ENABLED=1 go run main.go
 ```
-
----
 
 ### **Pterodactyl Panel**
 1. Create new "Application" server
@@ -103,7 +97,7 @@ CGO_ENABLED=1 go run main.go
 
 ---
 
-### Usage 🚀
+## Usage 🚀
 1. Run the bot:
    ```bash
    CGO_ENABLED=1 go run main.go
