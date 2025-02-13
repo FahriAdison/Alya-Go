@@ -1,5 +1,14 @@
 # Alya-Go 🤖
 
+<div align="center">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmLTDVt8C5Bpe7atTmZJpl3AiOUGQbBArv-FL8wnx72BauhhDnAQqNX30z&s=10" alt="Banner">
+  <br>
+  
+  ![Made By](https://img.shields.io/badge/Made_By-Papah--Chan-blueviolet)
+  ![Stars](https://img.shields.io/badge/Don't_Forget_To-⭐_Give_Stars!-yellow)
+
+</div>
+
 A WhatsApp bot built with Golang using the [whatsmeow](https://github.com/tulir/whatsmeow) library. Features include QR-based authentication, session management, and basic message handling.
 
 ![Go Version](https://img.shields.io/badge/Go-1.20%2B-blue)
