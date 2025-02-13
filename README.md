@@ -115,3 +115,46 @@ CGO_ENABLED=1 go run main.go
 3. Session will save to `whatsapp-session.db`
 
 ---
+
+## 🤝 Contributing
+
+<div align="center">
+  <h3>
+    <a href="https://github.com/FahriAdison/Alya-Go/issues/new/choose" style="color: #FFA500;">
+      🚨 Open Issue
+    </a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="https://github.com/FahriAdison/Alya-Go/compare" style="color: #00FF00;">
+      💡 Open Pull Request
+    </a>
+  </h3>
+</div>
+
+---
+
+## Supported Platforms 🖥️
+- **Termux (Android)**
+- **Linux/VPS** (Ubuntu, Debian, CentOS)
+- **Windows** (WSL/Native)
+- **MacOS**
+- **Pterodactyl Panel**
+
+---
+
+## 📜 License
+MIT License - See [LICENSE](LICENSE) for details.
+
+<div align="center" style="margin-top: 20px;">
+  <h3 style="color: #FF69B4;">
+    Made with ❤️ by Papah-Chan
+  </h3>
+  <p>
+    ⭐ Star this repo if you find it useful!
+  </p>
+</div>
+```
+
+**Preview:**  
+![README Preview](https://placehold.co/800x500/1a1a1a/FFF?text=README+Preview%0A%0A%F0%9F%A4%96+Alya-Go%0A%0AImage+Banner%0A%0ABadges%0A%0AFeatures%0A%0AInstallation+Code%0A%0AContributing+Links%0A%0APlatforms%0A%0ALicense%0A%0AFooter)
+
+---
