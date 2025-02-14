@@ -7,11 +7,14 @@
 
 ```
 
+---
 <div align="center" style="margin-top: 20px;">
-  <h3 style="color: #FF69B4;">
+  <p>
     STATUS SCRIPT NOW: 🟢
-  </h3>
-  
+  </p>
+  </div>
+---
+
 # Alya-Go 🤖
 
 <div align="center">
