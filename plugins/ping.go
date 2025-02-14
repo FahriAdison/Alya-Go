@@ -1,30 +1,38 @@
 package plugins
 
 import (
-	"context"
-	"go.mau.fi/whatsmeow"
-	"go.mau.fi/whatsmeow/types/events"
+    "context"
+    "fmt"
+
+    "go.mau.fi/whatsmeow"
+    "go.mau.fi/whatsmeow/proto/waE2E"
+    "go.mau.fi/whatsmeow/types/events"
+    "google.golang.org/protobuf/proto"
 )
 
-type PingPlugin struct{}
-
-func (p *PingPlugin) Name() string {
-	return "Ping"
-}
-
-func (p *PingPlugin) Commands() []string {
-	return []string{"!ping"}
-}
-
-func (p *PingPlugin) Handle(client *whatsmeow.Client, msg *events.Message) {
-	_, err := client.SendMessage(context.Background(), msg.Info.Chat, &whatsmeow.TextMessage{
-		Content: "🏓 Pong!",
-	})
-	if err != nil {
-		println("Failed to send ping response:", err.Error())
-	}
-}
-
+// init registers the "ping" and "!ping" commands.
 func init() {
-	Register(&PingPlugin{})
+    RegisterCommand("ping", PingHandler)
+    RegisterCommand("!ping", PingHandler)
+}
+
+// PingHandler responds to a ping command by sending a "pong" message.
+func PingHandler(client *whatsmeow.Client, evt *events.Message) {
+    // Build a text message using waE2E.Message.
+    msg := &waE2E.Message{
+	Conversation: proto.String("pong"),
+    }
+
+    // Determine the target chat.
+    target := evt.Info.Chat
+    if target.IsEmpty() {
+	target = evt.Info.Sender
+    }
+
+    resp, err := client.SendMessage(context.Background(), target, msg)
+    if err != nil {
+	fmt.Println("Error sending pong response:", err)
+	return
+    }
+    fmt.Println("Pong sent at:", resp.Timestamp)
 }
