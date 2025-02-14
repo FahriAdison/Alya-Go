@@ -1,4 +1,4 @@
-module whatsapp-bot
+module github.com/FahriAdison/Alya-Go
 
 go 1.23.5
 
