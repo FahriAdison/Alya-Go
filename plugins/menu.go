@@ -40,7 +40,7 @@ func MenuHandler(client *whatsmeow.Client, evt *events.Message) {
 	return
     }
 
-    err = lib.SendQuotedImageReply(client, evt, imagePath, caption)
+    err = lib.SendImage(client, evt, imagePath, caption)
     if err != nil {
 	fmt.Println("Error sending menu image reply:", err)
     }
