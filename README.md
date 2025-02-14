@@ -13,7 +13,6 @@
     STATUS SCRIPT NOW: 🟢
   </p>
   </div>
----
 
 # Alya-Go 🤖
 
