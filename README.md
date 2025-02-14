@@ -5,13 +5,12 @@
   - Undefined reference errors in `lib/function.go`
 - **Changed**
   - Updated dependencies to latest `whatsmeow` version
-  - Improved security checks for shell commands
+  - Improved security checks and owner for exec
+  - Simple Send Message
 - **Added**
   - Status indicator system
   - Cross-platform installation guides
-  - Menu Image
-  - Exec Only Owner
-  - Add Function On function.go
+  - Add Function On `lib/function.go`
 
 ### **v1.0.0 - 2025-02-13**
 - Initial Release
