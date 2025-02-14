@@ -1,5 +1,17 @@
-STATUS NOW: STILL UNDER FIXING🛠️
+### **INDICATOR STATUS SCRIPT**
+```bash
 
+🔴 UNDER FIXING/ERROR
+🟢 WORK
+⚫ MAINTENANCE
+
+```
+
+<div align="center" style="margin-top: 20px;">
+  <h3 style="color: #FF69B4;">
+    STATUS SCRIPT NOW: 🟢
+  </h3>
+  
 # Alya-Go 🤖
 
 <div align="center">
