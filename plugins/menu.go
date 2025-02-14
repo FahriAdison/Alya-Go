@@ -16,32 +16,43 @@ func init() {
     RegisterCommand("!menu", MenuHandler)
 }
 
-// MenuHandler calls the library function to send an image reply with a caption.
+// MenuHandler sends the menu image with formatted caption
 func MenuHandler(client *whatsmeow.Client, evt *events.Message) {
-    caption := "📋 Bot Menu\n\n" +
-	"1. /ping - Check connectivity\n" +
-	"2. /menu - Show this menu\n\n" +
-	"Select an option by typing its command."
+    caption := `📋 Bot Menu
 
-    // Get the current working directory where the command is executed
+Info
+
+1. ping
+2. menu
+
+Owner
+
+1. =>
+2. >
+3. $
+
+Select an option by typing its command.`
+
+    // Get current working directory
     currentDir, err := os.Getwd()
     if err != nil {
-	fmt.Println("Error getting current working directory:", err)
-	return
+        fmt.Println("Error getting current working directory:", err)
+        return
     }
 
-    // Construct the image path relative to the current working directory
+    // Construct image path
     imagePath := filepath.Join(currentDir, "storage", "menu.jpg")
 
-    // Check if the image file exists (for debugging)
+    // Verify image exists
     if _, err := os.Stat(imagePath); os.IsNotExist(err) {
-	fmt.Printf("Error: Image file not found at path: %s\n", imagePath)
-	fmt.Println("Please ensure 'storage/menu.jpg' exists in the correct location relative to where you run 'go run main.go'.")
-	return
+        fmt.Printf("Error: Image file not found at %s\n", imagePath)
+        fmt.Println("Please ensure 'storage/menu.jpg' exists in the project directory.")
+        return
     }
 
+    // Send image with caption
     err = lib.SendImage(client, evt, imagePath, caption)
     if err != nil {
-	fmt.Println("Error sending menu image reply:", err)
+        fmt.Println("Error sending menu image reply:", err)
     }
 }
