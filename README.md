@@ -1,6 +1,6 @@
 ## Changelog 📌
 
-### **v1.0.1 - 2025-05-15**
+### **v1.0.1 - 2025-02-15**
 - **Fixed**
   - Undefined reference errors in `lib/function.go`
 - **Changed**
