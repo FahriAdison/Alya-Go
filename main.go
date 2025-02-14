@@ -12,12 +12,15 @@ import (
     "go.mau.fi/whatsmeow"
     "go.mau.fi/whatsmeow/store/sqlstore"
     waLog "go.mau.fi/whatsmeow/util/log"
+
+    // Import plugins
+    _ "github.com/FahriAdison/Alya-Go/plugins"
 )
 
 var client *whatsmeow.Client
 
 func main() {
-    // Enable CGO requirements
+    // Enable CGO
     os.Setenv("CGO_ENABLED", "1")
 
     // Initialize logger
@@ -38,17 +41,13 @@ func main() {
 
     // QR Code Login Flow
     if client.Store.ID == nil {
-	// Generate QR channel
 	qrChan, _ := client.GetQRChannel(context.Background())
-
-	// Connect in background
 	go func() {
 	    if err := client.Connect(); err != nil {
 		panic(err)
 	    }
 	}()
 
-	// Display QR code
 	fmt.Println("Waiting for QR code...")
 	for evt := range qrChan {
 	    if evt.Event == "code" {
@@ -60,11 +59,21 @@ func main() {
 	    }
 	}
     } else {
-	// Existing session
 	if err := client.Connect(); err != nil {
 	    panic(err)
 	}
     }
+
+    // Send online indicator
+    sendOnlineIndicator()
+
+    // Load plugins
+    client.AddEventHandler(func(evt interface{}) {
+	switch v := evt.(type) {
+	case *events.Message:
+	    plugins.HandleMessage(client, v)
+	}
+    })
 
     // Keep alive
     fmt.Println("Bot is running (Press CTRL+C to exit)")
@@ -72,4 +81,15 @@ func main() {
     signal.Notify(c, os.Interrupt, syscall.SIGTERM)
     <-c
     client.Disconnect()
+}
+
+// Send online indicator to admin
+func sendOnlineIndicator() {
+    adminJID := "6285179855248@s.whatsapp.net" // Replace with your number
+    _, err := client.SendMessage(context.Background(), adminJID, &whatsmeow.TextMessage{
+	Content: "🤖 Bot is now online!",
+    })
+    if err != nil {
+	fmt.Println("Failed to send online indicator:", err)
+    }
 }
