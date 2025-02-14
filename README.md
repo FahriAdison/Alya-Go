@@ -14,7 +14,7 @@
 
 # Alya-Go 🤖
 <div align="center">
-  <img src="https://place-holder.com/1200x400/2C2F33/FFFFFF?text=Alya-Go+WhatsApp+Bot" alt="Banner">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk5zVAP3m15vO5A2fxPlFnGSyisCS16qdYrw&usqp=CAU" alt="Banner">
   <br>
   
   ![Go Version](https://img.shields.io/badge/Go-1.20%2B-blue)
