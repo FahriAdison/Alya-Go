@@ -1,5 +1,3 @@
----
-
 ## Changelog 📌
 
 ### **v1.0.1 - 2025-05-15**
@@ -21,8 +19,6 @@
   - Basic command handlers
   - Session persistence
   - System monitoring via `/ping`
-
----
 
 ### **INDICATOR STATUS SCRIPT**
 ```bash
@@ -204,4 +200,3 @@ MIT License - See [LICENSE](LICENSE) for details.
     🐞 Found a bug? <a href="https://github.com/FahriAdison/Alya-Go/issues">Let us know!</a>
   </p>
 </div>
-```
