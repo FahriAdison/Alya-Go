@@ -4,85 +4,144 @@ import (
     "context"
     "fmt"
     "os"
+    "path/filepath"
+    "time"
 
+    "github.com/gabriel-vasile/mimetype"
     "go.mau.fi/whatsmeow"
     "go.mau.fi/whatsmeow/proto/waE2E"
+    "go.mau.fi/whatsmeow/types"
     "go.mau.fi/whatsmeow/types/events"
     "google.golang.org/protobuf/proto"
 )
 
-// SendQuotedTextReply sends a text reply quoting the user's original message.
-func SendQuotedTextReply(client *whatsmeow.Client, evt *events.Message, replyText string) error {
-    msg := &waE2E.Message{
-	ExtendedTextMessage: &waE2E.ExtendedTextMessage{
-	    Text: proto.String(replyText),
-	    ContextInfo: &waE2E.ContextInfo{
-		StanzaID:  proto.String(evt.Info.ID),
-		Participant: proto.String(evt.Info.Sender.ToNonAD().String()),
-		QuotedMessage: evt.Message,
-	    },
-	},
-    }
+// ########################################
+// #         CORE MESSAGING FUNCTIONS     #
+// ########################################
 
-    // For groups, evt.Info.Chat is the group JID; if empty, fallback to Sender for direct messages.
-    target := evt.Info.Chat
-    if target.IsEmpty() {
-	target = evt.Info.Sender
-    }
-
-    resp, err := client.SendMessage(context.Background(), target, msg)
-    if err != nil {
-	return fmt.Errorf("failed to send quoted text reply: %w", err)
-    }
-    fmt.Println("Quoted text reply sent at:", resp.Timestamp)
-    return nil
+func GenerateMessageID(client *whatsmeow.Client) types.MessageID {
+    return client.GenerateMessageID()
 }
 
-// SendQuotedImageReply sends an image + caption as a quoted reply.
-// imagePath is the local path to the image file, caption is the text to display under the image.
-func SendQuotedImageReply(client *whatsmeow.Client, evt *events.Message, imagePath string, caption string) error {
-    // Read the image from disk.
-    imageData, err := os.ReadFile(imagePath)
+func SendText(client *whatsmeow.Client, target types.JID, text string, extra ...whatsmeow.SendRequestExtra) (whatsmeow.SendResponse, error) {
+    return client.SendMessage(context.Background(), target, &waE2E.Message{
+        Conversation: proto.String(text),
+    }, extra...)
+}
+
+func SendQuotedTextReply(client *whatsmeow.Client, evt *events.Message, text string, extra ...whatsmeow.SendRequestExtra) error {
+    target := evt.Info.Chat
+    if target.IsEmpty() {
+        target = evt.Info.Sender
+    }
+
+    _, err := client.SendMessage(context.Background(), target, &waE2E.Message{
+        ExtendedTextMessage: &waE2E.ExtendedTextMessage{
+            Text: proto.String(text),
+            ContextInfo: &waE2E.ContextInfo{
+                StanzaID:      proto.String(evt.Info.ID),
+                Participant:   proto.String(evt.Info.Sender.ToNonAD().String()),
+                QuotedMessage: evt.Message,
+            },
+        },
+    }, extra...)
+    return err
+}
+
+// ########################################
+// #         MEDIA MESSAGING FUNCTIONS    #
+// ########################################
+
+func SendImage(client *whatsmeow.Client, evt *events.Message, imagePath string, caption string, extra ...whatsmeow.SendRequestExtra) error {
+    return sendMediaMessage(client, evt, imagePath, caption, whatsmeow.MediaImage, extra...)
+}
+
+func SendDocument(client *whatsmeow.Client, evt *events.Message, filePath string, caption string, extra ...whatsmeow.SendRequestExtra) error {
+    return sendMediaMessage(client, evt, filePath, caption, whatsmeow.MediaDocument, extra...)
+}
+
+func sendMediaMessage(client *whatsmeow.Client, evt *events.Message, filePath string, caption string, mediaType whatsmeow.MediaType, extra ...whatsmeow.SendRequestExtra) error {
+    fileData, err := os.ReadFile(filePath)
     if err != nil {
-	return fmt.Errorf("failed to read image from %s: %w", imagePath, err)
+        return fmt.Errorf("failed to read file: %w", err)
     }
 
-    // Upload the image to WhatsApp servers.
-    uploadResp, err := client.Upload(context.Background(), imageData, whatsmeow.MediaImage)
+    mime, err := mimetype.DetectFile(filePath)
     if err != nil {
-	return fmt.Errorf("failed to upload image: %w", err)
+        return fmt.Errorf("failed to detect MIME type: %w", err)
     }
 
-    // Build an ImageMessage referencing the user’s original message in ContextInfo.
-    imageMsg := &waE2E.ImageMessage{
-	Caption:  proto.String(caption),
-	Mimetype:  proto.String("image/jpeg"),
-	URL:      proto.String(uploadResp.URL),
-	DirectPath: proto.String(uploadResp.DirectPath),
-	MediaKey:     uploadResp.MediaKey,
-	FileEncSHA256: uploadResp.FileEncSHA256,
-	FileSHA256:  uploadResp.FileSHA256,
-	FileLength:   proto.Uint64(uploadResp.FileLength),
-	ContextInfo: &waE2E.ContextInfo{ // Add ContextInfo here, inside ImageMessage
-	    StanzaID:  proto.String(evt.Info.ID),
-	    Participant: proto.String(evt.Info.Sender.ToNonAD().String()),
-	    QuotedMessage: evt.Message,
-	},
+    uploadResp, err := client.Upload(context.Background(), fileData, mediaType)
+    if err != nil {
+        return fmt.Errorf("upload failed: %w", err)
     }
-    msg := &waE2E.Message{
-	ImageMessage: imageMsg,
-    }
-
 
     target := evt.Info.Chat
     if target.IsEmpty() {
-	target = evt.Info.Sender
+        target = evt.Info.Sender
     }
 
-    resp, err := client.SendMessage(context.Background(), target, msg)
-    if err != nil {
-	return fmt.Errorf("failed to send quoted image reply: %w", err)
+    var message *waE2E.Message
+    switch mediaType {
+    case whatsmeow.MediaImage:
+        message = &waE2E.Message{
+            ImageMessage: &waE2E.ImageMessage{
+                Caption:       proto.String(caption),
+                Mimetype:      proto.String(mime.String()),
+                URL:           proto.String(uploadResp.URL),
+                DirectPath:    proto.String(uploadResp.DirectPath),
+                MediaKey:      uploadResp.MediaKey,
+                FileEncSHA256: uploadResp.FileEncSHA256,
+                FileSHA256:    uploadResp.FileSHA256,
+                FileLength:    proto.Uint64(uploadResp.FileLength),
+                ContextInfo: &waE2E.ContextInfo{
+                    StanzaID:      proto.String(evt.Info.ID),
+                    Participant:   proto.String(evt.Info.Sender.ToNonAD().String()),
+                    QuotedMessage: evt.Message,
+                },
+            },
+        }
+    case whatsmeow.MediaDocument:
+        message = &waE2E.Message{
+            DocumentMessage: &waE2E.DocumentMessage{
+                Caption:       proto.String(caption),
+                Mimetype:      proto.String(mime.String()),
+                FileName:      proto.String(filepath.Base(filePath)),
+                URL:           proto.String(uploadResp.URL),
+                DirectPath:    proto.String(uploadResp.DirectPath),
+                MediaKey:      uploadResp.MediaKey,
+                FileEncSHA256: uploadResp.FileEncSHA256,
+                FileSHA256:    uploadResp.FileSHA256,
+                FileLength:    proto.Uint64(uploadResp.FileLength),
+                ContextInfo: &waE2E.ContextInfo{
+                    StanzaID:      proto.String(evt.Info.ID),
+                    Participant:   proto.String(evt.Info.Sender.ToNonAD().String()),
+                    QuotedMessage: evt.Message,
+                },
+            },
+        }
     }
-    fmt.Println("Quoted image reply sent at:", resp.Timestamp)
-    return nil
+
+    _, err = client.SendMessage(context.Background(), target, message, extra...)
+    return err
+}
+
+
+// ########################################
+// #         GROUP MANAGEMENT            #
+// ########################################
+
+
+func AddGroupParticipants(client *whatsmeow.Client, groupJID types.JID, users []types.JID) error {
+    _, err := client.UpdateGroupParticipants(groupJID, users, whatsmeow.ParticipantChangeAdd)
+    return err
+}
+
+// ########################################
+// #         UTILITY FUNCTIONS           #
+// ########################################
+
+
+func SetDisappearingTimer(client *whatsmeow.Client, target types.JID, duration time.Duration) error {
+    return client.SetDisappearingTimer(target, duration)
 }
