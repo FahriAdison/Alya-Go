@@ -1,3 +1,29 @@
+---
+
+## Changelog 📌
+
+### **v1.0.1 - 2025-05-15**
+- **Fixed**
+  - Undefined reference errors in `lib/function.go`
+- **Changed**
+  - Updated dependencies to latest `whatsmeow` version
+  - Improved security checks for shell commands
+- **Added**
+  - Status indicator system
+  - Cross-platform installation guides
+  - Menu Image
+  - Exec Only Owner
+  - Add Function On function.go
+
+### **v1.0.0 - 2025-02-13**
+- Initial Release
+  - QR-based authentication
+  - Basic command handlers
+  - Session persistence
+  - System monitoring via `/ping`
+
+---
+
 ### **INDICATOR STATUS SCRIPT**
 ```bash
 🔴 UNDER FIXING/ERROR
