@@ -163,7 +163,7 @@ git clone https://github.com/FahriAdison/Alya-Go.git && cd Alya-Go && go run mai
 ```bash
 CGO_ENABLED=1 go run main.go
 ```
-1. Pairing Code With Number WhatsApp Via **WhatsApp → Linked Devices**
+1. Pair the bot using a pairing code (No QR scanning needed)
 2. Session saved to `whatsapp-session.db`
 3. Available commands:
    - `$ [command]` - Execute shell command
