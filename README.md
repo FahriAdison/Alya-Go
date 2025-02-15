@@ -10,6 +10,7 @@
 - **Added**
   - 🟢 Enhanced security for owner commands
   - 🛠️ Code refinements for better maintainability
+  - 🔵 Add Sticker Feature
     
 ### **v1.0.1 - 2025-02-14**
 - **Fixed**
@@ -162,13 +163,14 @@ git clone https://github.com/FahriAdison/Alya-Go.git && cd Alya-Go && go run mai
 ```bash
 CGO_ENABLED=1 go run main.go
 ```
-1. Scan QR code via **WhatsApp → Linked Devices**
+1. Pairing Code With Number WhatsApp Via **WhatsApp → Linked Devices**
 2. Session saved to `whatsapp-session.db`
 3. Available commands:
    - `$ [command]` - Execute shell command
    - `=> [code]` - Evaluate Go code
-   - `/ping` - System diagnostics
-   - `/menu` - Show interactive menu
+   - `ping` - System diagnostics
+   - `menu` - Show interactive menu
+   - `sticker` - Convert Image To Sticker
 
 ---
 
