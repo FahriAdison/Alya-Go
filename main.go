@@ -49,7 +49,7 @@ func main() {
     if client.Store.ID == nil {
 	fmt.Println("🔄 Generating pairing code...")
 
-	pairingCode, err := client.PairPhone("639687312284", true, whatsmeow.PairClientChrome, "Chrome (Windows)")
+	pairingCode, err := client.PairPhone("CHANGE WITH YOUR NUMBER BOT,NOT USE +", true, whatsmeow.PairClientChrome, "Chrome (Windows)")
 	if err != nil {
 	    log.Fatalf("❌ Error generating pairing code: %v", err)
 	}
