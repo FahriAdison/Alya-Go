@@ -3,12 +3,13 @@ package main
 import (
     "context"
     "fmt"
+    "log"
     "os"
     "os/signal"
     "syscall"
+    "time"
 
-    "github.com/mdp/qrterminal/v3"
-    _ "github.com/mattn/go-sqlite3" // Register SQLite3 driver
+    _ "github.com/mattn/go-sqlite3"
     "go.mau.fi/whatsmeow"
     "go.mau.fi/whatsmeow/store/sqlstore"
     "go.mau.fi/whatsmeow/types"
@@ -25,59 +26,56 @@ import (
 var client *whatsmeow.Client
 
 func main() {
+    // Database setup
     dbLog := waLog.Stdout("Database", "ERROR", true)
     container, err := sqlstore.New("sqlite3", "file:whatsapp-session.db?_foreign_keys=off", dbLog)
     if err != nil {
-	panic(fmt.Errorf("Error creating store: %w", err))
+	log.Fatalf("❌ Error creating store: %v", err)
     }
 
     deviceStore, err := container.GetFirstDevice()
     if err != nil {
-	panic(fmt.Errorf("Error getting device: %w", err))
+	log.Fatalf("❌ Error getting device: %v", err)
     }
 
     client = whatsmeow.NewClient(deviceStore, waLog.Stdout("Client", "ERROR", true))
 
-    if client.Store.ID == nil {
-	qrChan, err := client.GetQRChannel(context.Background())
-	if err != nil {
-	    panic(fmt.Errorf("Error getting QR channel: %w", err))
-	}
-	go func() {
-	    if err := client.Connect(); err != nil {
-		panic(err)
-	    }
-	}()
-	fmt.Println("Waiting for QR code...")
-	for evt := range qrChan {
-	    if evt.Event == "code" {
-		qrterminal.GenerateHalfBlock(evt.Code, qrterminal.L, os.Stdout)
-		fmt.Println("Scan this QR code with your WhatsApp mobile app")
-	    } else if evt.Event == "success" {
-		fmt.Println("Login successful!")
-		break
-	    }
-	}
-    } else {
-	if err := client.Connect(); err != nil {
-	    panic(fmt.Errorf("Error connecting: %w", err))
-	}
+    // ✅ Connect before generating pairing code
+    if err := client.Connect(); err != nil {
+	log.Fatalf("❌ Error connecting to WhatsApp: %v", err)
     }
 
+    // ✅ Generate Pairing Code
+    if client.Store.ID == nil {
+	fmt.Println("🔄 Generating pairing code...")
+
+	pairingCode, err := client.PairPhone("639687312284", true, whatsmeow.PairClientChrome, "Chrome (Windows)")
+	if err != nil {
+	    log.Fatalf("❌ Error generating pairing code: %v", err)
+	}
+
+	fmt.Printf("📌 Pairing Code: %s\n", pairingCode)
+	fmt.Println("✅ Enter this pairing code in your WhatsApp app to connect!")
+
+	// Give time for pairing before proceeding
+	time.Sleep(10 * time.Second)
+    }
+
+    // ✅ Send Online Status
     sendOnlineIndicator()
 
-    // Add an event handler that logs incoming messages and routes commands.
+    // ✅ Message Event Handling
     client.AddEventHandler(func(evt interface{}) {
 	switch v := evt.(type) {
 	case *events.Message:
-	    // Log incoming messages only.
 	    lib.PrintIncomingMessage(v)
-	    // Route command handling.
 	    plugins.Handle(client, v)
 	}
     })
 
-    fmt.Println("Bot is running (Press CTRL+C to exit)")
+    fmt.Println("🤖 Bot is running (Press CTRL+C to exit)")
+
+    // ✅ Graceful Shutdown Handling
     c := make(chan os.Signal, 1)
     signal.Notify(c, os.Interrupt, syscall.SIGTERM)
     <-c
@@ -85,6 +83,7 @@ func main() {
     client.Disconnect()
 }
 
+// ✅ Notify Admin That Bot is Online
 func sendOnlineIndicator() {
     adminJID := types.NewJID("6285179855248", "s.whatsapp.net") // Replace with your admin JID
     msg := &waE2E.Message{
@@ -92,6 +91,6 @@ func sendOnlineIndicator() {
     }
     _, err := client.SendMessage(context.Background(), adminJID, msg)
     if err != nil {
-	fmt.Println("Failed to send online indicator:", err)
+	fmt.Println("⚠️ Failed to send online indicator:", err)
     }
 }
