@@ -1,6 +1,17 @@
 ## Changelog 📌
 
-### **v1.0.1 - 2025-02-15**
+### **v1.0.2 - 2025-02-15**
+- **Changed**
+  - 🔄 **Switched from QR-based login to Pairing Code login**
+  - 📌 Now supports `client.PairPhone()` for authentication
+  - 🚀 Optimized connection handling for stability
+- **Fixed**
+  - Resolved `websocket not connected` error in `main.go`
+- **Added**
+  - 🟢 Enhanced security for owner commands
+  - 🛠️ Code refinements for better maintainability
+    
+### **v1.0.1 - 2025-02-14**
 - **Fixed**
   - Undefined reference errors in `lib/function.go`
 - **Changed**
@@ -50,7 +61,7 @@ A powerful WhatsApp bot built with Golang using [whatsmeow](https://github.com/t
 ---
 
 ## Features ✨
-- ✅ QR Code Authentication
+- ✅ Pairing Code Authentication (No QR Scanning!)
 - 🔄 Session Persistence
 - 📱 Multi-Device Support
 - 🛡️ Owner-Only Commands
